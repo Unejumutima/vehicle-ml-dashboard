@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+{% load dashboard_filters %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Management Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f4f7fb;
+            color: #1e293b;
+            font-family: Arial, sans-serif;
+        }
+
+        .sidebar {
+            background: #0b2735;
+            color: white;
+            min-height: 100vh;
+            padding: 28px 20px;
+        }
+
+        .sidebar h4 {
+            margin-bottom: 35px;
+        }
+
+        .sidebar a {
+            color: #d6e3ea;
+            text-decoration: none;
+            display: block;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .sidebar a.active,
+        .sidebar a:hover {
+            background: #1d4558;
+            color: white;
+        }
+
+        .main-content {
+            padding: 30px;
+            min-width: 0;
+        }
+
+        .stat-card, .chart-card, .table-card {
+            background: white;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 3px 15px rgba(15, 23, 42, 0.05);
+            height: 100%;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .stat-value {
+            font-size: 26px;
+            font-weight: bold;
+            margin-top: 10px;
+            overflow-wrap: anywhere;
+        }
+
+        .chart-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .chart-container > div {
+            min-width: 0;
+        }
+
+        .table-responsive {
+            max-height: 500px;
+        }
+
+        th {
+            white-space: nowrap;
+        }
+
+        @media (max-width: 767px) {
+            .sidebar {
+                min-height: auto;
+            }
+
+            .main-content {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="row">
+
+        <aside class="col-md-2 sidebar">
+            <h4>Vehicle<span style="color:#56c5b5">Hub</span></h4>
+
+            <a href="#overview" class="active">Overview</a>
+            <a href="#analytics">Analytics</a>
+            <a href="#vehicles">Vehicle Records</a>
+        </aside>
+
+        <main class="col-md-10 main-content">
+
+            <section id="overview">
+                <h2 class="fw-bold">Vehicle Management Dashboard</h2>
+                <p class="text-secondary">
+                    Overview of vehicle inventory, prices, and market trends.
+                </p>
+
+                <div class="row g-4 mt-2">
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="stat-card">
+                            <div class="stat-label">Total Vehicles</div>
+                            <div class="stat-value">{{ total_vehicles }}</div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="stat-card">
+                            <div class="stat-label">Manufacturers</div>
+                            <div class="stat-value">{{ total_manufacturers }}</div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="stat-card">
+                            <div class="stat-label">Average Selling Price</div>
+                            <div class="stat-value">{{ average_price }}</div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="stat-card">
+                            <div class="stat-label">Average Kilometers</div>
+                            <div class="stat-value">{{ average_mileage }}</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="analytics" class="mt-5">
+                <h4 class="fw-bold mb-3">Vehicle Analytics</h4>
+
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="chart-card">
+                            <div class="chart-container">
+                                {{ manufacturer_chart|safe }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="chart-card">
+                            <div class="chart-container">
+                                {{ fuel_chart|safe }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="chart-card">
+                            <div class="chart-container">
+                                {{ price_chart|safe }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="vehicles" class="mt-5">
+                <div class="table-card">
+                    <h4 class="fw-bold">Vehicle Records</h4>
+                    <p class="text-secondary">
+                        Showing up to 100 records from your dataset.
+                    </p>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                            <tr>
+                                {% for column in display_columns %}
+                                    <th>{{ column|title }}</th>
+                                {% endfor %}
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for vehicle in vehicle_table %}
+                                <tr>
+                                    {% for column in display_columns %}
+                                        <td>{{ vehicle|get_item:column }}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="9">No vehicle records found.</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="text-secondary text-center mt-5">
+                VehicleHub · Machine Learning Vehicle Management
+            </footer>
+
+        </main>
+    </div>
+</div>
+</body>
+</html>
